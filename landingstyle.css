@@ -1,0 +1,28 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #F6F9FC, #E1F0FF);
+    color: #333;
+}
+header {
+   color: #357C99;
+}
+body button{
+    padding: 12px 24px;
+    color: #fff;
+    background-color: #4B88A2;
+    border-color: #4B88A2;
+    border-radius: 12px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+body button:hover{
+    background-color: #357C99;
+    transform: scale(1.05);
+}
+.students img{
+    width: 300px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 12px;
+    transition: none;
+}
