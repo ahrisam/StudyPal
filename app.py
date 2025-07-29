@@ -2,7 +2,7 @@ from flask import Flask, request, render_template
 
 app = Flask(__name__)
 
-@app.route("/start", methods=["GET", "POST"])
+@app.route("/", methods=["GET", "POST"])
 def start():
     if request.method == "POST":
         return "<h2>hello</h2>"
