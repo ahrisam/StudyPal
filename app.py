@@ -15,6 +15,8 @@ class User(db.Model):
     name = db.Column("name", db.String(100))
     email = db.Column("email", db.String(100))
     password = db.Column("password", db.String(200))
+    department = db.Column(db.String(200))
+    profile_complete = db.Column(db.Boolean, default = False)
 
 
     def __init__(self, name, email, password):
@@ -43,11 +45,11 @@ def login():
 
     return render_template("login.html")
 
-@app.route("/user")
+@app.route("/dashboard")
 def user():
     if "user" in session:
         user = session["user"]
-        return f"<h1>{user}</h1>"
+        return f"<h1>Welcome {user}</h1>"
     else:
         if "user" in session:
             return redirect(url_for("user"))
