@@ -4,32 +4,42 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
     <link href="style.css" rel="stylesheet">
     <title>Login</title>
 </head>
 <body>
-    <div>
-        <form action="#" method="POST">
-            <h1>Login</h1>
-            <div class="input-box">
-                <input type="text" placeholder="Username" name="nm" required>
-                <i class='bxr  bxs-user-circle'></i> 
-            </div>
-            <div class="input-box">
-                <input type="text" placeholder="Password" required>
-            </div>
-            <div>
-                <label><input type="checkbox">Remember Me</label>
-                <a href="#">Forgot Password?</a>
-            </div>
-
-            <input type="submit" value="submit">
-            
-            <div class="register-link">
-                <p>Don't have an account?<a href="#">Register</a></p>
-            </div>
-        </form>
-    </div>
+    <main>
+        <div class="login-section">
+            <form action="#" method="POST" aria-label="Login Form">
+                <h1>Login</h1>
+                <div class="input-box">
+                    <label for="username">
+                        <i class='bx bxs-user-circle'></i>
+                        <span class="visually-hidden"></span>
+                    </label>
+                    <input type="text" id="username" name="nm" placeholder="Username" required autocomplete="username">
+                </div>
+                <div class="input-box">
+                    <label for="password">
+                        <i class='bx bxs-lock-alt'></i>
+                        <span class="visually-hidden"></span>
+                    </label>
+                    <input type="password" id="password" name="password" placeholder="Password" required autocomplete="current-password">
+                </div>
+                <div class="form-options">
+                    <label>
+                        <input type="checkbox" name="remember">
+                        Remember Me
+                    </label>
+                    <a href="#" class="forgot-link">Forgot Password?</a>
+                </div>
+                <button type="submit" class="login-btn">Login</button>
+                <div class="register-link">
+                    <p>Don't have an account? <a href="#">Register</a></p>
+                </div>
+            </form>
+        </div>
+    </main>
 </body>
 </html>
