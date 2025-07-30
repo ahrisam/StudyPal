@@ -13,6 +13,7 @@
         <section class="signup-section">
             <form action="#" method="POST" aria-label="Sign Up Form">
                 <h1>Sign Up</h1>
+
                 <div class="input-box">
                     <label for="username">
                         <i class='bx bxs-user-circle'></i>
@@ -38,6 +39,15 @@
                 <div class="login-link">
                     <p>Already have an account? <a href="login.html">Login</a></p>
                 </div>
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        {% for message in messages %}
+                        <ul class="flash-messages">
+                                <li>{{ message }}</li>
+                        </ul>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
             </form>
         </section>
     </main>
