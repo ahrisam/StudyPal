@@ -9,7 +9,8 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"]= False
 
 db = SQLAlchemy(app)
 
-class users(db.Model):
+class User(db.Model):
+    __tablename__ = "users"
     _id = db.Column("id", db.Integer, primary_key=True)
     name = db.Column("name", db.String(100))
     email = db.Column("email", db.String(100))
@@ -28,18 +29,17 @@ def home():
     return render_template("landing.html")
 
 @app.route("/login", methods=["GET", "POST"])
-@app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        username = request.form["nm"]
-        password = request.form["password"]
+        username = request.form.get("nm")
+        password = request.form.get("password")
 
-        user_data = users.query.filter_by(name=username).first()
+        user_data = User.query.filter_by(name=username).first()
         if user_data and check_password_hash(user_data.password, password):
             session["user"] = user_data.name
             return redirect(url_for('user'))
         else:
-            return "Invalid username or password."
+            flash("Invalid username or password.")
 
     return render_template("login.html")
 
@@ -54,25 +54,28 @@ def user():
         return redirect(url_for("login"))
 
 @app.route("/signup", methods=["GET","POST"])
-@app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
-        name = request.form["name"]
+        name = request.form["username"]
         email = request.form["email"]
         password_raw = request.form["password"]
 
-        existing_user = users.query.filter_by(email=email).first()
+        existing_user = User.query.filter_by(email=email).first()
         if existing_user:
-            return flash("Account exist already")
+            flash("Account exist already")
+            return redirect(url_for('login'))
 
         password_hashed = generate_password_hash(password_raw)
-        new_user = users(name, email, password_hashed)
+        new_user = User(name, email, password_hashed)
         db.session.add(new_user)
         db.session.commit()
 
-        return flash("Account created! You can now log in.")
+        flash("Account created successfully")
+        session["user"] = name
+        return redirect(url_for("user"))
     
     return render_template("signup.html")
+
 @app.route("/logout")
 def logout():
     session.pop("user", None)
