@@ -1,8 +1,12 @@
 from flask import Flask, request, render_template, url_for, redirect, session
-
+from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 app.secret_key = "hello"
+app.config['SQLACHEMY_DATABASE_URI'] = 'sqlite:///user.sqlite3'
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"]= False
 
+
+db = SQLAlchemy(app)
 @app.route("/", methods=["GET", "POST"])
 def home():
     if request.method == "POST":
