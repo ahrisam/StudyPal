@@ -14,15 +14,14 @@ body {
     height: 100vh;
     background: url('3DB&WNeon.jpg') no-repeat center center fixed;
     background-size: cover;
-
 }
 
 main {
-    background:  transparent;
+    background: transparent;
     border: 2px solid rgba(255, 255, 255, 0.2);
     border-radius: 8px;
     backdrop-filter: blur(5px);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     overflow: hidden;
     padding: 30px 40px;
 }
@@ -31,6 +30,7 @@ main h1 {
     margin-bottom: 1.5rem;
     font-size: 1.5rem;
     text-align: center;
+    color: white;
 }
 
 .input-box {
@@ -43,7 +43,7 @@ main h1 {
     left: 9px;
     top: 9px;
     transition: 0.2s;
-    color: #332f2f;
+    color: #999;
 }
 
 .input-box input {
@@ -67,47 +67,31 @@ main h1 {
     color: #007bff;
 }
 
-.form-options {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-}
-
-.forgot-link {
-    color: #007bff;
-    text-decoration: none;
-}
-
-.forgot-link:hover {
-    text-decoration: underline;
-}
-
-.login-btn {
+.signup-btn {
     width: 100%;
     padding: 12px;
     border: none;
-    border-radius: 20px;
+    border-radius: 4px;
     background-color: #007bff;
     color: #fff;
     font-size: 1rem;
     cursor: pointer;
 }
 
-.login-btn:hover {
+.signup-btn:hover {
     background-color: #0056b3;
 }
 
-.register-link {
+.login-link {
     text-align: center;
     margin-top: 1rem;
 }
 
-.register-link a {
+.login-link a {
     color: #007bff;
     text-decoration: none;
 }
 
-.register-link a:hover {
+.login-link a:hover {
     text-decoration: underline;
 }
