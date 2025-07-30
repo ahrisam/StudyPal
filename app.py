@@ -12,11 +12,14 @@ db = SQLAlchemy(app)
 class users(db.Model):
     _id = db.Column("id", db.Integer, primary_key=True)
     name = db.Column("name", db.String(100))
-    email = db.Column("name", db.String(100))
+    email = db.Column("email", db.String(100))
+    password = db.Column("password", db.String(200))
 
-    def __init__(self, name, email):
+
+    def __init__(self, name, email, password):
         self.name = name
         self.email = email
+        self.password = password
 
 @app.route("/", methods=["GET", "POST"])
 def home():
@@ -42,6 +45,18 @@ def user():
         if "user" in session:
             return redirect(url_for("user"))
         return redirect(url_for("login"))
+
+@app.route("/signup", methods=["GET","POST"])
+def signup():
+    if request.method == "POST":
+        name = request.form["name"]
+        email = request.form["email"]
+        password = generate_password_hash(request.form["password"])
+        new_user = users(name, email, password)
+
+        db.session.add(new_user)
+        db.session.commit()
+        return redirect(url_for('login'))
 
 @app.route("/logout")
 def logout():
