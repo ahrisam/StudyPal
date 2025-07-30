@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, url_for, redirect, session
+from flask import Flask, request, render_template, url_for, redirect, session, flash
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -28,13 +28,20 @@ def home():
     return render_template("landing.html")
 
 @app.route("/login", methods=["GET", "POST"])
+@app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        user = request.form["nm"]
-        session["user"] = user
-        return redirect(url_for("user"))
-    else:
-        return render_template("login.html")
+        username = request.form["nm"]
+        password = request.form["password"]
+
+        user_data = users.query.filter_by(name=username).first()
+        if user_data and check_password_hash(user_data.password, password):
+            session["user"] = user_data.name
+            return redirect(url_for('user'))
+        else:
+            return "Invalid username or password."
+
+    return render_template("login.html")
 
 @app.route("/user")
 def user():
@@ -47,17 +54,25 @@ def user():
         return redirect(url_for("login"))
 
 @app.route("/signup", methods=["GET","POST"])
+@app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
         name = request.form["name"]
         email = request.form["email"]
-        password = generate_password_hash(request.form["password"])
-        new_user = users(name, email, password)
+        password_raw = request.form["password"]
 
+        existing_user = users.query.filter_by(email=email).first()
+        if existing_user:
+            return flash("Account exist already")
+
+        password_hashed = generate_password_hash(password_raw)
+        new_user = users(name, email, password_hashed)
         db.session.add(new_user)
         db.session.commit()
-        return redirect(url_for('login'))
 
+        return flash("Account created! You can now log in.")
+    
+    return render_template("signup.html")
 @app.route("/logout")
 def logout():
     session.pop("user", None)
