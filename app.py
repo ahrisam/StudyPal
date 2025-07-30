@@ -1,9 +1,13 @@
 from flask import Flask, request, render_template, url_for, redirect, session, flash
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
+from itsdangerous import URLSafeSerializer
+from dotenv import load_dotenv
+import os
 
 app = Flask(__name__)
-app.secret_key = "hello"
+load_dotenv()
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///user.sqlite3'
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"]= False
 
@@ -15,9 +19,6 @@ class User(db.Model):
     name = db.Column("name", db.String(100))
     email = db.Column("email", db.String(100))
     password = db.Column("password", db.String(200))
-    department = db.Column(db.String(200))
-    profile_complete = db.Column(db.Boolean, default = False)
-
 
     def __init__(self, name, email, password):
         self.name = name
@@ -60,14 +61,14 @@ def signup():
     if request.method == "POST":
         name = request.form["username"]
         email = request.form["email"]
-        password_raw = request.form["password"]
+        password = request.form["password"]
 
         existing_user = User.query.filter_by(email=email).first()
         if existing_user:
             flash("Account exist already")
             return redirect(url_for('login'))
 
-        password_hashed = generate_password_hash(password_raw)
+        password_hashed = generate_password_hash(password, method='pbkdf2:sha256', salt_length=16)
         new_user = User(name, email, password_hashed)
         db.session.add(new_user)
         db.session.commit()
