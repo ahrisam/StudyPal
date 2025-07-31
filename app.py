@@ -31,11 +31,21 @@ class User(db.Model):
     name = db.Column("name", db.String(100))
     email = db.Column("email", db.String(100))
     password = db.Column("password", db.String(200))
+    oauth_id = db.Column(db.String(100))
+    isActive = db.Column(db.Boolean())
 
     def __init__(self, name, email, password):
         self.name = name
         self.email = email
         self.password = password
+
+class Subs(db.Model):
+    __tablename__ = "subjects"
+    _id = db.Column(db.Integer, primary_key = True)
+    SubjectName = db.Column(db.String(100))
+
+    def __init__(self, SubjectNAme):
+        self.SubjectName = SubjectNAme
 
 @app.route("/", methods=["GET", "POST"])
 def home():
