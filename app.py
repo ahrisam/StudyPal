@@ -42,7 +42,7 @@ class User(db.Model):
         self.email = email
         self.password = password
 
-class Profile(db.Mode):
+class Profile(db.Model):
     _id = db.Column(db.Integer, primary_key = True)
     avatar = db.Column(db.String(100))
     gender = db.Column(db.String(10))
