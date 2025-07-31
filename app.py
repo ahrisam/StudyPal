@@ -36,25 +36,22 @@ class User(db.Model):
     name = db.Column("name", db.String(100))
     email = db.Column("email", db.String(100))
     password = db.Column("password", db.String(200))
-    gender = db.Column(db.Enum("Male","Female"))
-    avatar = db.Column(db.String(50), nullable = True)
-    oauth_id = db.Column(db.String(100))
-    isActive = db.Column(db.Boolean())
 
-    def __init__(self, name, email, password, gender, avatar):
+    def __init__(self, name, email, password):
         self.name = name
         self.email = email
         self.password = password
-        self.gender = gender
-        self.avatar = avatar
 
-class Subs(db.Model):
-    __tablename__ = "subjects"
+class Profile(db.Mode):
     _id = db.Column(db.Integer, primary_key = True)
-    SubjectName = db.Column(db.String(100))
+    avatar = db.Column(db.String(100))
+    gender = db.Column(db.String(10))
+    isActive = db.Column(db.Boolean())
 
-    def __init__(self, SubjectNAme):
-        self.SubjectName = SubjectNAme
+    def __init__(self, avatar, gender, isActive):
+        self.avatar = avatar
+        self.gender = gender
+        self.isActive = isActive
 
 @app.route("/", methods=["GET", "POST"])
 def home():
@@ -119,7 +116,7 @@ def signup():
 
         flash("Account created successfully")
         session["user"] = name
-        return redirect(url_for("profile_set "))
+        return redirect(url_for("profile_set"))
     
     return render_template("signup.html")
 
