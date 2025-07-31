@@ -31,13 +31,15 @@ class User(db.Model):
     name = db.Column("name", db.String(100))
     email = db.Column("email", db.String(100))
     password = db.Column("password", db.String(200))
+    gender = db.Column(db.Enum("Male","Female"))
     oauth_id = db.Column(db.String(100))
     isActive = db.Column(db.Boolean())
 
-    def __init__(self, name, email, password):
+    def __init__(self, name, email, password, gender):
         self.name = name
         self.email = email
         self.password = password
+        self.gender = gender
 
 class Subs(db.Model):
     __tablename__ = "subjects"
