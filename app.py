@@ -121,7 +121,6 @@ def signup():
     return render_template("signup.html")
 
 @app.route("/profile-setup")
-@login_required
 def profile_set():
     return render_template("profileset.html")
 
