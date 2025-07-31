@@ -3,15 +3,27 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeSerializer
 from dotenv import load_dotenv
+from flask_dance.contrib.google import make_google_blueprint, google
 import os
 
 app = Flask(__name__)
 load_dotenv()
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///user.sqlite3'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URI")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"]= False
+app.config["GOOGLE_CLIENT_SECRET"] = os.getenv("GOOGLE_CLIENT_SECRET")
+app.config["Google_CLIENT_ID"] = os.getenv("Google_CLIENT_ID")
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
+
 
 db = SQLAlchemy(app)
+google_bp = make_google_blueprint(
+    client_id = os.getenv("Google_CLIENT_ID"),
+    client_secret = os.getenv("GOOGLE_CLIENT_SECRET"),
+    redirect_to = "google_login",
+    scope = ["profile","email"]
+)
+app.register_blueprint(google_bp, url_prefix = "/login")
 
 class User(db.Model):
     __tablename__ = "users"
@@ -46,6 +58,15 @@ def login():
 
     return render_template("login.html")
 
+@app.route("/login/google/authorized")
+def google_login():
+    if not google.authorized:
+        return redirect(url_for("google.login"))
+    response = google.get("/oauth2/v2/userinfo")
+    if response.ok:
+        user_info = response.json()
+        return f"hello, {user_info["name"]}"
+
 @app.route("/dashboard")
 def user():
     if "user" in session:
@@ -75,9 +96,13 @@ def signup():
 
         flash("Account created successfully")
         session["user"] = name
-        return redirect(url_for("user"))
+        return redirect(url_for("profile_set "))
     
     return render_template("signup.html")
+
+@app.route("/profile-setup")
+def profile_set():
+    return render_template("profileset.html")
 
 @app.route("/logout")
 def logout():
