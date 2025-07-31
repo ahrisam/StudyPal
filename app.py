@@ -1,5 +1,6 @@
 from flask import Flask, request, render_template, url_for, redirect, session, flash
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager, login_required, login_user, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeSerializer
 from dotenv import load_dotenv
@@ -14,6 +15,10 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"]= False
 app.config["GOOGLE_CLIENT_SECRET"] = os.getenv("GOOGLE_CLIENT_SECRET")
 app.config["Google_CLIENT_ID"] = os.getenv("Google_CLIENT_ID")
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "login"
 
 
 db = SQLAlchemy(app)
@@ -32,14 +37,16 @@ class User(db.Model):
     email = db.Column("email", db.String(100))
     password = db.Column("password", db.String(200))
     gender = db.Column(db.Enum("Male","Female"))
+    avatar = db.Column(db.String(50), nullable = True)
     oauth_id = db.Column(db.String(100))
     isActive = db.Column(db.Boolean())
 
-    def __init__(self, name, email, password, gender):
+    def __init__(self, name, email, password, gender, avatar):
         self.name = name
         self.email = email
         self.password = password
         self.gender = gender
+        self.avatar = avatar
 
 class Subs(db.Model):
     __tablename__ = "subjects"
@@ -69,6 +76,10 @@ def login():
             flash("Invalid username or password.")
 
     return render_template("login.html")
+
+@login_manager.user_loader
+def load_user():
+    return User.query.get(int(id))
 
 @app.route("/login/google/authorized")
 def google_login():
@@ -113,6 +124,7 @@ def signup():
     return render_template("signup.html")
 
 @app.route("/profile-setup")
+@login_required
 def profile_set():
     return render_template("profileset.html")
 
