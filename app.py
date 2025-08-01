@@ -1,6 +1,6 @@
 from flask import Flask, request, render_template, url_for, redirect, session, flash
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager, login_required, login_user, logout_user, current_user
+from flask_login import LoginManager, login_required, login_user, logout_user, current_user, UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeSerializer
 from dotenv import load_dotenv
@@ -30,12 +30,12 @@ google_bp = make_google_blueprint(
 )
 app.register_blueprint(google_bp, url_prefix = "/login")
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     __tablename__ = "users"
-    _id = db.Column("id", db.Integer, primary_key=True)
-    name = db.Column("name", db.String(100))
-    email = db.Column("email", db.String(100))
-    password = db.Column("password", db.String(200))
+    id = db.Column("id", db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    email = db.Column(db.String(100))
+    password = db.Column(db.String(200))
 
     def __init__(self, name, email, password):
         self.name = name
@@ -67,16 +67,16 @@ def login():
 
         user_data = User.query.filter_by(name=username).first()
         if user_data and check_password_hash(user_data.password, password):
-            session["user"] = user_data.name
-            return redirect(url_for('user'))
+            login_user(user_data)
+            return redirect(url_for('dashboard'))
         else:
             flash("Invalid username or password.")
-
     return render_template("login.html")
 
+
 @login_manager.user_loader
-def load_user():
-    return User.query.get(int(id))
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 @app.route("/login/google/authorized")
 def google_login():
@@ -88,15 +88,10 @@ def google_login():
         return f"hello, {user_info["name"]}"
 
 @app.route("/dashboard")
-def user():
-    if "user" in session:
-        user = session["user"]
-        return f"<h1>Welcome {user}</h1>"
-    else:
-        if "user" in session:
-            return redirect(url_for("user"))
-        return redirect(url_for("login"))
-
+@login_required
+def dashboard():
+    return render_template("dashboard.html", name = current_user.name)
+    
 @app.route("/signup", methods=["GET","POST"])
 def signup():
     if request.method == "POST":
