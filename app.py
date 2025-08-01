@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeSerializer
 from dotenv import load_dotenv
-import os
+import ospi
 
 app = Flask(__name__)
 load_dotenv()
