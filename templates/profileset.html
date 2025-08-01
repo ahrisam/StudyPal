@@ -1,3 +1,34 @@
+<form method="POST" action="/setup_profile" enctype="multipart/form-data">
+  <label>Full Name:</label>
+  <input type="text" name="name" required>
+
+  <label>Department:</label>
+  <select name="department" required>
+    <option value="Computer Science">Computer Science</option>
+    <option value="Mathematics">Mathematics</option>
+    <option value="AI & Robotics">AI & Robotics</option>
+  </select>
+
+  <label>Study Interests:</label>
+  <select name="interests" multiple>
+    <option value="AI">AI</option>
+    <option value="Math">Math</option>
+    <option value="Writing">Writing</option>
+  </select>
+
+  <label>Preferred Study Time:</label>
+  <select name="study_times">
+    <option value="Morning">Morning</option>
+    <option value="Afternoon">Afternoon</option>
+    <option value="Evening">Evening</option>
+  </select>
+
+  <label>Profile Picture:</label>
+  <input type="file" name="profile_pic" accept="image/*">
+
+  <button type="submit">Save Profile</button>
+</form>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>

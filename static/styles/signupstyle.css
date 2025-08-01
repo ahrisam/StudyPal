@@ -12,7 +12,7 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background: url('static/images/3DB&WNeon.jpg') no-repeat center center fixed;
+    background-image: url("../image/3DB&WNeon.jpg");
     background-size: cover;
 }
 

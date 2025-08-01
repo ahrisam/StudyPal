@@ -1,17 +1,38 @@
 from flask import Flask, request, render_template, url_for, redirect, session, flash
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager, login_required, login_user, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeSerializer
 from dotenv import load_dotenv
+<<<<<<< HEAD
 import ospi
+=======
+from flask_dance.contrib.google import make_google_blueprint, google
+import os
+>>>>>>> a09eb39bc9b223a6e8174df8c23864ca6b75c551
 
 app = Flask(__name__)
 load_dotenv()
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///user.sqlite3'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URI")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"]= False
+app.config["GOOGLE_CLIENT_SECRET"] = os.getenv("GOOGLE_CLIENT_SECRET")
+app.config["Google_CLIENT_ID"] = os.getenv("Google_CLIENT_ID")
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "login"
+
 
 db = SQLAlchemy(app)
+google_bp = make_google_blueprint(
+    client_id = os.getenv("Google_CLIENT_ID"),
+    client_secret = os.getenv("GOOGLE_CLIENT_SECRET"),
+    redirect_to = "google_login",
+    scope = ["profile","email"]
+)
+app.register_blueprint(google_bp, url_prefix = "/login")
 
 class User(db.Model):
     __tablename__ = "users"
@@ -24,6 +45,17 @@ class User(db.Model):
         self.name = name
         self.email = email
         self.password = password
+
+class Profile(db.Model):
+    _id = db.Column(db.Integer, primary_key = True)
+    avatar = db.Column(db.String(100))
+    gender = db.Column(db.String(10))
+    isActive = db.Column(db.Boolean())
+
+    def __init__(self, avatar, gender, isActive):
+        self.avatar = avatar
+        self.gender = gender
+        self.isActive = isActive
 
 @app.route("/", methods=["GET", "POST"])
 def home():
@@ -45,6 +77,19 @@ def login():
             flash("Invalid username or password.")
 
     return render_template("login.html")
+
+@login_manager.user_loader
+def load_user():
+    return User.query.get(int(id))
+
+@app.route("/login/google/authorized")
+def google_login():
+    if not google.authorized:
+        return redirect(url_for("google.login"))
+    response = google.get("/oauth2/v2/userinfo")
+    if response.ok:
+        user_info = response.json()
+        return f"hello, {user_info["name"]}"
 
 @app.route("/dashboard")
 def user():
@@ -75,9 +120,13 @@ def signup():
 
         flash("Account created successfully")
         session["user"] = name
-        return redirect(url_for("user"))
+        return redirect(url_for("profile_set"))
     
     return render_template("signup.html")
+
+@app.route("/profile-setup")
+def profile_set():
+    return render_template("profileset.html")
 
 @app.route("/logout")
 def logout():
