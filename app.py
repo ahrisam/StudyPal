@@ -44,13 +44,18 @@ class User(db.Model, UserMixin):
 
 class Profile(db.Model):
     _id = db.Column(db.Integer, primary_key = True)
+    fname = db.Column(db.String(100))
     avatar = db.Column(db.String(100))
-    gender = db.Column(db.String(10))
+    interests = db.Column(db.String(50))
+    age = db.Column(db.String(40))
+    studyGoal = db.Column(db.String(50))
+
     isActive = db.Column(db.Boolean())
 
-    def __init__(self, avatar, gender, isActive):
+    def __init__(self,fname, avatar, gender,interests,age, isActive):
         self.avatar = avatar
-        self.gender = gender
+        self.age = age
+        self.interests = interests
         self.isActive = isActive
 
 @app.route("/", methods=["GET", "POST"])
@@ -117,6 +122,15 @@ def signup():
 
 @app.route("/profile-setup")
 def profile_set():
+    fullname = request.form["fullname"]
+    age = request.form["age"]
+    avatar = request.form["avatar"]
+    existing_profile = User.query.filter(fname=fullname).first()
+    if existing_profile:
+        return redirect(url_for(dashboard))
+    new_profile = Profile(fullname, age, avatar)
+    db.session.add(new_profile)
+    db.session.commit()
     return render_template("profileset.html")
 
 @app.route("/logout")
