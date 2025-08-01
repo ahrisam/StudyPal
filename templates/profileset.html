@@ -1,31 +1,37 @@
-<form method="POST" action="/setup_profile" enctype="multipart/form-data">
-  <label>Full Name:</label>
-  <input type="text" name="name" required>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/setup.css') }}">
+    <title>Profile Setup</title>
+</head>
+<body>
+    <div class="setup-container">
+        <h1>Set up your StudyPal profile</h1>
+        <p>Welcome to StudyPal! Please fill out the form below to create your profile.</p>
 
-  <label>Department:</label>
-  <select name="department" required>
-    <option value="Computer Science">Computer Science</option>
-    <option value="Mathematics">Mathematics</option>
-    <option value="AI & Robotics">AI & Robotics</option>
-  </select>
+        <form action="/profile-set" method="post">
 
-  <label>Study Interests:</label>
-  <select name="interests" multiple>
-    <option value="AI">AI</option>
-    <option value="Math">Math</option>
-    <option value="Writing">Writing</option>
-  </select>
+            <label>Full Name</label>
+            <input type="text" name="fullname" required>
 
-  <label>Preferred Study Time:</label>
-  <select name="study_times">
-    <option value="Morning">Morning</option>
-    <option value="Afternoon">Afternoon</option>
-    <option value="Evening">Evening</option>
-  </select>
+            <label>Age</label>
+            <input type="number" name="age" min="17" max="100" required>
 
-  <label>Profile Picture:</label>
-  <input type="file" name="profile_pic" accept="image/*">
+            <!--Avatar Selection-->
+            <label>Select an Avatar</label>
+            <div class="avatar-options">
+                <label><input type="radio" name="avatar1" value="1" required /><img src="static/image/Avatar/Avatar1.jpg" /></label>
+                <label><input type="radio" name="avatar2" value="2" /><img src="static/image/Avatar/Avatar2.jpg" /></label>
+                <label><input type="radio" name="avatar3" value="3" /><img src="static/image/Avatar/Avatar3.jpg" /></label>
+                <label><input type="radio" name="avatar4" value="4" /><img src="static/image/Avatar/Avatar4.jpg" /></label>
+                <label><input type="radio" name="avatar5" value="5" /><img src="static/image/Avatar/Avatar5.jpg" /></label>
+                <label><input type="radio" name="avatar6" value="6" /><img src="static/image/Avatar/Avatar6.jpg" /></label>
+                <label><input type="radio" name="avatar7" value="7" /><img src="static/image/Avatar/Avatar7.jpg" /></label>
+            </div>
 
+<<<<<<< HEAD
   <button type="submit">Save Profile</button>
 </form>
 
@@ -62,6 +68,8 @@
                 <label><input type="radio" name="avatar" value="7" /><img src="Avatar7.jpg" /></label>
             </div>
 
+=======
+>>>>>>> 8db3c6add111d4dca3aaf09633189928df7bd868
             <!-- Interest Tags -->
             <label>Select Your Interests</label>
             <div class="checkbox-group">

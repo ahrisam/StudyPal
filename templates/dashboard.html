@@ -1,0 +1,36 @@
+<!-- templates/dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Study Pal Dashboard</title>
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}"> -->
+</head>
+<body>
+    <header>
+        <h1>Welcome, {{ name }}</h1>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </header>
+
+    <main>
+        <section class="overview">
+            <h2>Your Overview</h2>
+            <ul>
+                <li>Active Subjects: 5</li>
+                <li>Tasks Due Today: 2</li>
+                <li>Progress: 68%</li>
+            </ul>
+        </section>
+
+        <section class="tools">
+            <h2>Study Tools</h2>
+            <div class="card-grid">
+                <div class="card">🧠 Flashcards</div>
+                <div class="card">📅 Planner</div>
+                <div class="card">📈 Progress Tracker</div>
+                <div class="card">📚 Resources</div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
