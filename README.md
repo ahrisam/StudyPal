@@ -10,8 +10,11 @@ StudyPal is a student-focused web application that helps users connect with stud
 
 ## Tech Stack
 - Python / Flask (backend)
-- HTML / CSS / JavaScript (frontend)
-- SQLite / PostgreSQL (database)
+- HTML / CSS (frontend)
+- SQLAlchemy (database)
+- 
+##  Status
+> This project is actively being developed and will be updated regularly.
 
 ##  How to Run Locally
 1. Clone this repository
