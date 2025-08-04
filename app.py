@@ -2,7 +2,7 @@ from flask import Flask, request, render_template, url_for, redirect, session, f
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user, UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
-from itsdangerous import URLSafeSerializer
+# from itsdangerous import URLSafeSerializer
 from dotenv import load_dotenv
 <<<<<<< HEAD
 import ospi
@@ -11,7 +11,10 @@ from flask_dance.contrib.google import make_google_blueprint, google
 import os
 >>>>>>> a09eb39bc9b223a6e8174df8c23864ca6b75c551
 
+#Initialising the Flask app
 app = Flask(__name__)
+
+#Configurations
 load_dotenv()
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URI")
@@ -20,12 +23,13 @@ app.config["GOOGLE_CLIENT_SECRET"] = os.getenv("GOOGLE_CLIENT_SECRET")
 app.config["Google_CLIENT_ID"] = os.getenv("Google_CLIENT_ID")
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
+#Initialising extentions
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
-
-
 db = SQLAlchemy(app)
+
+#Setting Up google OAuth
 google_bp = make_google_blueprint(
     client_id = os.getenv("Google_CLIENT_ID"),
     client_secret = os.getenv("GOOGLE_CLIENT_SECRET"),
@@ -34,40 +38,45 @@ google_bp = make_google_blueprint(
 )
 app.register_blueprint(google_bp, url_prefix = "/login")
 
+#Setting up the Database; using SQLAlchemy and Flask-Login intergration
 class User(db.Model, UserMixin):
     __tablename__ = "users"
-    id = db.Column("id", db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
-    email = db.Column(db.String(100))
-    password = db.Column(db.String(200))
+    email = db.Column(db.String(100), unique = True)
+    password = db.Column(db.String(200), nullable = False)
 
     def __init__(self, name, email, password):
         self.name = name
         self.email = email
         self.password = password
 
+#DB for user profile
 class Profile(db.Model):
-    _id = db.Column(db.Integer, primary_key = True)
+    id = db.Column(db.Integer, primary_key = True)
     fname = db.Column(db.String(100))
-    avatar = db.Column(db.String(100))
-    interests = db.Column(db.String(50))
+    avatar = db.Column(db.String(255))
     age = db.Column(db.String(40))
-    studyGoal = db.Column(db.String(50))
 
-    isActive = db.Column(db.Boolean())
 
-    def __init__(self,fname, avatar, gender,interests,age, isActive):
-        self.avatar = avatar
+    def __init__(self, fname, age, avatar):
+        self.fname = fname
         self.age = age
-        self.interests = interests
-        self.isActive = isActive
+        self.avatar = avatar
 
+#Welcome page/landing page
 @app.route("/", methods=["GET", "POST"])
 def home():
     if request.method == "POST":
         return redirect(url_for("login"))
     return render_template("landing.html")
 
+#Load user function required by flask
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+#Login
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -83,10 +92,7 @@ def login():
     return render_template("login.html")
 
 
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
-
+#Google login
 @app.route("/login/google/authorized")
 def google_login():
     if not google.authorized:
@@ -117,6 +123,7 @@ def signup():
         new_user = User(name, email, password_hashed)
         db.session.add(new_user)
         db.session.commit()
+        login_user(new_user)
 
         flash("Account created successfully")
         session["user"] = name
@@ -124,22 +131,27 @@ def signup():
     
     return render_template("signup.html")
 
-@app.route("/profile-setup")
+@app.route("/profile-setup", methods=["POST","GET"])
 def profile_set():
-    fullname = request.form["fullname"]
-    age = request.form["age"]
-    avatar = request.form["avatar"]
-    existing_profile = User.query.filter(fname=fullname).first()
-    if existing_profile:
-        return redirect(url_for(dashboard))
-    new_profile = Profile(fullname, age, avatar)
-    db.session.add(new_profile)
-    db.session.commit()
+    if request.method == "POST":
+        fullname = request.form["fullname"]
+        age = request.form["age"]
+        avatar = request.form["avatar"]
+
+        existing_profile = Profile.query.filter_by(fname = fullname).first()
+        if existing_profile:
+            return redirect(url_for("dashboard"))
+        
+        new_profile = Profile(fullname, age)
+        db.session.add(new_profile)
+        db.session.commit()
+        return redirect(url_for("dashboard"))
     return render_template("profileset.html")
 
 @app.route("/logout")
+@login_required
 def logout():
-    session.pop("user", None)
+    login_user()
     return redirect(url_for("login"))
 
 if __name__ == "__main__":
