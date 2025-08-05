@@ -14,7 +14,7 @@
             <h1>Login</h1>
             <div class="input-box">
                 <input type="text" placeholder="Username" name="nm" required>
-                <i class='bxr  bxs-user-circle'></i> 
+                <i class='bx bxs-user-circle'></i>
             </div>
             <div class="input-box">
                 <input type="password" name= "password" placeholder="Password" required>
@@ -28,7 +28,7 @@
             
             <div class="register-link">
                 <p>Don't have an account?<a href="/signup">Register</a></p>
-                <button onclick="location.href='{{ url_for('google.login') }}'"> Continue with Google</button>
+                <button type="button" onclick="location.href='{{ url_for(\'google.login\') }}'">Continue with Google</button>
             </div>
         </form>
     </div>
