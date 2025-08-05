@@ -4,12 +4,8 @@ from flask_login import LoginManager, login_required, login_user, logout_user, c
 from werkzeug.security import generate_password_hash, check_password_hash
 # from itsdangerous import URLSafeSerializer
 from dotenv import load_dotenv
-<<<<<<< HEAD
-import ospi
-=======
 from flask_dance.contrib.google import make_google_blueprint, google
 import os
->>>>>>> a09eb39bc9b223a6e8174df8c23864ca6b75c551
 
 #Initialising the Flask app
 app = Flask(__name__)
