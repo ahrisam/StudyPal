@@ -7,7 +7,7 @@ StudyPal is a student-focused web application that helps users connect with stud
 - Match students by course or study time
 - Chat or contact system (future version)
 - Secure authentication
-- CSRF protection on the way
+- CSRF protection
 
 ## Tech Stack
 - Python / Flask (backend)
