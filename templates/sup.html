@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+     <link rel="stylesheet" href="{{ url_for('static', filename='styles/Signupstyle.css') }}">
+    <title>Sign Up</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <main>
+        <section class="signup-section">
+            <form action="{{ url_for('sup')}}" method="POST" aria-label="Sign Up Form">
+                <h1>Sign Up</h1>
+                {{ form.hidden_tag() }}
+
+                <div class="input-box">
+                    <label for="username">
+                        <i class='bx bxs-user-circle'></i>
+                        <span class="visually-hidden"></span>
+                    </label>
+                    {{ form.username() }}
+                </div>
+                <div class="input-box">
+                    <label for="email">
+                        <i class='bx bxs-envelope'></i>
+                        <span class="visually-hidden"></span>
+                    </label>
+                    {{ form.email() }}
+                </div>
+                <div class="input-box">
+                    <label for="password">
+                        <i class='bx bxs-lock-alt'></i>
+                        <span class="visually-hidden"></span>
+                    </label>
+                    {{ form.password() }}
+                </div>
+                <button class="signup-btn">{{ form.submit() }}</button>
+                <div class="login-link">
+                    <p>Already have an account? <a href="/login">Login</a></p>
+                </div>
+            </form>
+        </section>
+    </main>
+</body>
+</html>
