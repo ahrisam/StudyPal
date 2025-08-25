@@ -1,11 +1,13 @@
 from flask import Flask, request, render_template, url_for, redirect, session, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user, UserMixin
+from flask_dance.contrib.google import make_google_blueprint, google
+from wtforms import StringField, SubmitField, PasswordField, EmailField
+from flask_wtf import FlaskForm
+from wtforms.validators import DataRequired, Email
 from werkzeug.security import generate_password_hash, check_password_hash
 # from itsdangerous import URLSafeSerializer
 from dotenv import load_dotenv
-import ospi
-from flask_dance.contrib.google import make_google_blueprint, google
 import os
 
 #Initialising the Flask app
@@ -18,7 +20,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URI")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"]= False
 app.config["GOOGLE_CLIENT_SECRET"] = os.getenv("GOOGLE_CLIENT_SECRET")
 app.config["Google_CLIENT_ID"] = os.getenv("Google_CLIENT_ID")
-os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 #Initialising extentions
 login_manager = LoginManager()
@@ -61,11 +62,23 @@ class Profile(db.Model):
         self.age = age
         self.avatar = avatar
 
+class SignupForms(FlaskForm):
+    username = StringField("Username", validators=[DataRequired(message="Enter your username")], render_kw={"placeholder":"Enter your name"})
+    email = EmailField("Email", validators=[DataRequired(message="Enter a valid email address")], render_kw={"placeholder":"Enter your email"})
+    password = PasswordField("Password", validators=[DataRequired(message="Enter a strong pass")], render_kw={"placeholder":"Enter your password"})
+    submit = SubmitField("Submit")
+
+class LoginForms(FlaskForm):
+    username = StringField("Username", validators=[DataRequired(message="Enter your username")], render_kw={"placeholder":"Username"})
+    password = PasswordField("Password",validators=[DataRequired(message="Enter your password")], render_kw="Password")
+    submit = SubmitField("Submit")
+
 #Welcome page/landing page
 @app.route("/", methods=["GET", "POST"])
 def home():
     if request.method == "POST":
         return redirect(url_for("login"))
+        print("Redirecting to login page")
     return render_template("landing.html")
 
 #Load user function required by flask
@@ -76,9 +89,10 @@ def load_user(user_id):
 #Login
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    if request.method == "POST":
-        username = request.form.get("nm")
-        password = request.form.get("password")
+    form = LoginForms()
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
 
         user_data = User.query.filter_by(name=username).first()
         if user_data and check_password_hash(user_data.password, password):
@@ -89,44 +103,40 @@ def login():
     return render_template("login.html")
 
 
-#Google login
-@app.route("/login/google/authorized")
-def google_login():
-    if not google.authorized:
-        return redirect(url_for("google.login"))
-    response = google.get("/oauth2/v2/userinfo")
-    if response.ok:
-        user_info = response.json()
-        return f"hello, {user_info["name"]}"
+# #Google login
+# @app.route("/login/google/authorized")
+# def google_login():
+#     if not google.authorized:
+#         return redirect(url_for("google.login"))
+#     response = google.get("/oauth2/v2/userinfo")
+#     if response.ok:
+#         user_info = response.json()
+#         return f"hello, {user_info["name"]}"
 
 @app.route("/dashboard")
 @login_required
 def dashboard():
     return render_template("dashboard.html", name = current_user.name)
-    
-@app.route("/signup", methods=["GET","POST"])
-def signup():
-    if request.method == "POST":
-        name = request.form["username"]
-        email = request.form["email"]
-        password = request.form["password"]
 
-        existing_user = User.query.filter_by(email=email).first()
-        if existing_user:
-            flash("Account exist already")
+@app.route("/signup", methods=["POST","GET"])
+def sup():
+    form = SignupForms()
+    if form.validate_on_submit():
+        pass_hashed = generate_password_hash(form.password.data)
+        exist_user = User.query.filter_by(email=form.email.data).first()
+
+        if exist_user:
+            flash("You already ready have an account")
             return redirect(url_for('login'))
-
-        password_hashed = generate_password_hash(password, method='pbkdf2:sha256', salt_length=16)
-        new_user = User(name, email, password_hashed)
+        
+        new_user = User(name = form.username.data, email= form.email.data, password= pass_hashed)
         db.session.add(new_user)
         db.session.commit()
         login_user(new_user)
-
-        flash("Account created successfully")
-        session["user"] = name
         return redirect(url_for("profile_set"))
+
+    return render_template("sup.html", form=form)
     
-    return render_template("signup.html")
 
 @app.route("/profile-setup", methods=["POST","GET"])
 def profile_set():
