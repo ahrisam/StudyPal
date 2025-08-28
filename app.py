@@ -2,7 +2,7 @@ from flask import Flask, request, render_template, url_for, redirect, session, f
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user, UserMixin
 from flask_dance.contrib.google import make_google_blueprint, google
-from wtforms import StringField, SubmitField, PasswordField, EmailField
+from wtforms import StringField, SubmitField, PasswordField, EmailField, BooleanField
 from flask_wtf import FlaskForm
 from wtforms.validators import DataRequired, Email
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -70,15 +70,15 @@ class SignupForms(FlaskForm):
 
 class LoginForms(FlaskForm):
     username = StringField("Username", validators=[DataRequired(message="Enter your username")], render_kw={"placeholder":"Username"})
-    password = PasswordField("Password",validators=[DataRequired(message="Enter your password")], render_kw="Password")
+    password = PasswordField("Password",validators=[DataRequired(message="Enter your password")], render_kw={"placeholder":"Password"})
     submit = SubmitField("Submit")
+    remember = BooleanField("Remember me")
 
 #Welcome page/landing page
 @app.route("/", methods=["GET", "POST"])
 def home():
     if request.method == "POST":
         return redirect(url_for("login"))
-        print("Redirecting to login page")
     return render_template("landing.html")
 
 #Load user function required by flask
@@ -91,7 +91,7 @@ def load_user(user_id):
 def login():
     form = LoginForms()
     if form.validate_on_submit():
-        username = form.username.data
+        username = form.username.data.strip()
         password = form.password.data
 
         user_data = User.query.filter_by(name=username).first()
@@ -100,7 +100,7 @@ def login():
             return redirect(url_for('dashboard'))
         else:
             flash("Invalid username or password.")
-    return render_template("login.html")
+    return render_template("login.html", form=form)
 
 
 # #Google login
@@ -132,6 +132,7 @@ def sup():
         new_user = User(name = form.username.data, email= form.email.data, password= pass_hashed)
         db.session.add(new_user)
         db.session.commit()
+        flash("Account successful")
         login_user(new_user)
         return redirect(url_for("profile_set"))
 
