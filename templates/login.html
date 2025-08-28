@@ -10,7 +10,12 @@
 </head>
 <body>
     <div>
+<<<<<<< Updated upstream
         <form action="/login" method="POST">
+=======
+        <form action="{{ url_for('login') }}" method="POST">
+            {{ form.hidden_tag() }}
+>>>>>>> Stashed changes
             <h1>Login</h1>
             <div class="input-box">
                 <input type="text" placeholder="Username" name="nm" required>
@@ -20,16 +25,15 @@
                 <input type="password" name= "password" placeholder="Password" required>
             </div>
             <div>
-                <label><input type="checkbox">Remember Me</label>
+                <label> {{ form.remember() }}Remember Me</label>
                 <a href="#">Forgot Password?</a>
             </div>
 
             <input type="submit" value="submit">
             
-            <div class="register-link">
+            <!-- <div class="register-link">
                 <p>Don't have an account?<a href="/signup">Register</a></p>
-                <button type="button" onclick="location.href='{{ url_for(\'google.login\') }}'">Continue with Google</button>
-            </div>
+            </div> -->
         </form>
     </div>
 </body>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="setup.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/profileset.html') }}">
     <title>Profile Setup</title>
 </head>
 <body>
@@ -11,12 +11,7 @@
         <h1>Set up your StudyPal profile</h1>
         <p>Welcome to StudyPal! Please fill out the form below to create your profile.</p>
 
-<<<<<<< HEAD
-        <form action="/submit-profile" method="post">
-=======
         <form action="/profile-setup" method="post">
->>>>>>> 628bc1d2de52e1e700b8447040ec1533c840df20
-
             <label>Full Name</label>
             <input type="text" name="fullname" required>
 
@@ -26,15 +21,6 @@
             <!--Avatar Selection-->
             <label>Select an Avatar</label>
             <div class="avatar-options">
-<<<<<<< HEAD
-                <label><input type="radio" name="avatar" value="1" required /><img src="Avatar1.jpg" /></label>
-                <label><input type="radio" name="avatar" value="2" /><img src="Avatar2.jpg" /></label>
-                <label><input type="radio" name="avatar" value="3" /><img src="Avatar3.jpg" /></label>
-                <label><input type="radio" name="avatar" value="4" /><img src="Avatar4.jpg" /></label>
-                <label><input type="radio" name="avatar" value="5" /><img src="Avatar5.jpg" /></label>
-                <label><input type="radio" name="avatar" value="6" /><img src="Avatar6.jpg" /></label>
-                <label><input type="radio" name="avatar" value="7" /><img src="Avatar7.jpg" /></label>
-=======
                 <label><input type="radio" name="avatar" value="avatar1" required /><img src="static/image/Avatar/Avatar1.jpg" /></label>
                 <label><input type="radio" name="avatar" value="avatar2" /><img src="static/image/Avatar/Avatar2.jpg" /></label>
                 <label><input type="radio" name="avatar" value="avatar3" /><img src="static/image/Avatar/Avatar3.jpg" /></label>
@@ -42,7 +28,6 @@
                 <label><input type="radio" name="avatar" value="avatar5" /><img src="static/image/Avatar/Avatar5.jpg" /></label>
                 <label><input type="radio" name="avatar" value="avatar6" /><img src="static/image/Avatar/Avatar6.jpg" /></label>
                 <label><input type="radio" name="avatar" value="avatar7" /><img src="static/image/Avatar/Avatar7.jpg" /></label>
->>>>>>> 628bc1d2de52e1e700b8447040ec1533c840df20
             </div>
 
             <!-- Interest Tags -->
