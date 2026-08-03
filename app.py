@@ -13,11 +13,12 @@ app = Flask(__name__)
 #Configurations
 load_dotenv()
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URI")
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///studypal.db'
+# app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URI")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"]= False
-app.config["GOOGLE_CLIENT_SECRET"] = os.getenv("GOOGLE_CLIENT_SECRET")
-app.config["Google_CLIENT_ID"] = os.getenv("Google_CLIENT_ID")
-os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
+# app.config["GOOGLE_CLIENT_SECRET"] = os.getenv("GOOGLE_CLIENT_SECRET")
+# app.config["Google_CLIENT_ID"] = os.getenv("Google_CLIENT_ID")
+# os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 #Initialising extentions
 login_manager = LoginManager()
@@ -88,15 +89,15 @@ def login():
     return render_template("login.html")
 
 
-#Google login
-@app.route("/login/google/authorized")
-def google_login():
-    if not google.authorized:
-        return redirect(url_for("google.login"))
-    response = google.get("/oauth2/v2/userinfo")
-    if response.ok:
-        user_info = response.json()
-        return f"hello, {user_info["name"]}"
+# #Google login
+# @app.route("/login/google/authorized")
+# def google_login():
+#     if not google.authorized:
+#         return redirect(url_for("google.login"))
+#     response = google.get("/oauth2/v2/userinfo")
+#     if response.ok:
+#         user_info = response.json()
+#         return f"hello, {user_info["name"]}"
 
 @app.route("/dashboard")
 @login_required
